@@ -39,8 +39,11 @@ object Main extends App {
 //
 //  println(length(myL))
 
-  println(sumFoldLeft(myL))
-  println(productFoldLeft(MyList(1.0, 2.0, 3.0)))
-  println(length(myL))
+//  println(sumFoldLeft(myL))
+//  println(productFoldLeft(MyList(1.0, 2.0, 3.0)))
+//  println(length(myL))
+
+//  println(reverseFoldLeft(myL))
+//  println(reverseFoldRight(myL))
 
 }

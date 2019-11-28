@@ -64,7 +64,7 @@ object MyList {
 
   // 3.9 length using foldRight
   // the right el is the result of the rec call to foldRight
-  def length[A](l: MyList[A]): Int = foldRight(l, 0)((_, rightRes) => 1 + rightRes)
+  def length[A](l: MyList[A]): Int = foldRight(l, 0)((_, acc) => 1 + acc)
 
   // 3.10 fold left
   @tailrec
@@ -78,12 +78,12 @@ object MyList {
   def productFoldLeft(ds: MyList[Double]): Double = foldLeft(ds, 1.0)(_ * _)
   def lengthFoldLeft[A](l: MyList[A]): Int = foldLeft(l, 0)((_, acc) => 1 + acc)
 
-  // TODO
   // 3.11 reverse
-//  def reverse[A](l: MyList[A]): MyList[A] = l match {
-//    case Nil => Nil
-//    case Cons(h, t) => Cons()
-//  }
+  def reverseFoldLeft[A](l: MyList[A]): MyList[A] =
+    foldLeft[A, MyList[A]](l, Nil)((el, acc) => append(Cons(el, Nil), acc))
+
+  def reverseFoldRight[A](l: MyList[A]): MyList[A] =
+    foldRight[A, MyList[A]](l, Nil)((el, acc) => append(acc, Cons(el, Nil)))
 
   def apply[A](as: A*): MyList[A] =
     if (as.isEmpty) Nil
