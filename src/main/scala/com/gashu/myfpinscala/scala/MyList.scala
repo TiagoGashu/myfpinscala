@@ -74,16 +74,34 @@ object MyList {
       case Cons(x, tail) => foldLeft(tail, f(x, z))(f)
     }
 
+  // 3.11
   def sumFoldLeft(ints: MyList[Int]): Int = foldLeft(ints, 0)(_ + _)
   def productFoldLeft(ds: MyList[Double]): Double = foldLeft(ds, 1.0)(_ * _)
   def lengthFoldLeft[A](l: MyList[A]): Int = foldLeft(l, 0)((_, acc) => 1 + acc)
 
-  // 3.11 reverse
+  // 3.12 reverse
   def reverseFoldLeft[A](l: MyList[A]): MyList[A] =
     foldLeft[A, MyList[A]](l, Nil)((el, acc) => append(Cons(el, Nil), acc))
 
   def reverseFoldRight[A](l: MyList[A]): MyList[A] =
     foldRight[A, MyList[A]](l, Nil)((el, acc) => append(acc, Cons(el, Nil)))
+
+  // 3.13 hard T__T
+  //  def foldRightTailRec[A, B](l: MyList[A], z: B)(f: (A, B) => B) =
+
+  // 3.14
+  def appendFoldRight[A](l1: MyList[A], l2: MyList[A]): MyList[A] =
+    foldRight(l1, l2)((el, acc) => Cons(el, acc))
+
+  // TODO: is it possible to implement using foldLeft?
+  //  def appendFoldLeft[A](l1: MyList[A], l2: MyList[A]): MyList[A] =
+
+  // 3.15
+  def flattenList[A](ll: MyList[MyList[A]]): MyList[A] =
+    ll match {
+      case Nil => Nil
+      case Cons(h, t) => foldLeft(t, h)((list, acc) => append(acc, list))
+    }
 
   def apply[A](as: A*): MyList[A] =
     if (as.isEmpty) Nil

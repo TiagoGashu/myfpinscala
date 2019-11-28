@@ -46,4 +46,9 @@ object Main extends App {
 //  println(reverseFoldLeft(myL))
 //  println(reverseFoldRight(myL))
 
+
+  println(appendFoldRight(MyList(1, 2, 3), MyList(4, 5, 6)))
+
+  println(MyList(MyList(1, 2, 3), MyList(4, 5, 6), MyList(7, 8, 9)))
+  println(flattenList(MyList(MyList(1, 2, 3), MyList(4, 5, 6), MyList(7, 8, 9))))
 }
