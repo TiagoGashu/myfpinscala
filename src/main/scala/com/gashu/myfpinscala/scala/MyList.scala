@@ -12,10 +12,10 @@ case class Cons[+A](head: A, tail: MyList[A]) extends MyList[A]
 
 object MyList {
 
-  def foldRight[A, B](as: MyList[A], baseCase: B)(f: (A, B) => B): B =
+  def foldRight[A, B](as: MyList[A], z: B)(f: (A, B) => B): B =
     as match {
-      case Nil => baseCase
-      case Cons(x, xs) => f(x, foldRight(xs, baseCase)(f))
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
     }
 
   def sum(ints: MyList[Int]): Int = foldRight(ints, 0)(_ + _)
@@ -24,7 +24,7 @@ object MyList {
 
   // 3.2
   def tail[A](l: MyList[A]): MyList[A] = l match {
-    case Nil => throw new UnsupportedOperationException("List is empty!")
+    case Nil => throw new RuntimeException("List is empty!")
     case Cons(_, tail) => tail
   }
 
@@ -37,7 +37,7 @@ object MyList {
   // 3.4
   @tailrec
   def drop[A](l: MyList[A], n: Int): MyList[A] = (l, n) match {
-    case (Nil, n) if n > 0 => throw new UnsupportedOperationException("No elements to drop!")
+    case (Nil, n) if n > 0 => throw new RuntimeException("No elements to drop!")
     case (list, 0) => list
     case (Cons(_, tail), n) => drop(tail, n - 1)
   }
@@ -57,10 +57,33 @@ object MyList {
 
   // 3.6 O(n)
   def init[A](l: MyList[A]): MyList[A] = l match {
-    case Nil => Nil
-    case Cons(h, Cons(_, Nil)) => Cons(h, Nil)
+    case Nil => throw new RuntimeException("init on empty list")
+    case Cons(_, Nil) => Nil
     case Cons(h, t) => Cons(h, init(t))
   }
+
+  // 3.9 length using foldRight
+  // the right el is the result of the rec call to foldRight
+  def length[A](l: MyList[A]): Int = foldRight(l, 0)((_, rightRes) => 1 + rightRes)
+
+  // 3.10 fold left
+  @tailrec
+  def foldLeft[A, B](as: MyList[A], z: B)(f: (A, B) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, tail) => foldLeft(tail, f(x, z))(f)
+    }
+
+  def sumFoldLeft(ints: MyList[Int]): Int = foldLeft(ints, 0)(_ + _)
+  def productFoldLeft(ds: MyList[Double]): Double = foldLeft(ds, 1.0)(_ * _)
+  def lengthFoldLeft[A](l: MyList[A]): Int = foldLeft(l, 0)((_, acc) => 1 + acc)
+
+  // TODO
+  // 3.11 reverse
+//  def reverse[A](l: MyList[A]): MyList[A] = l match {
+//    case Nil => Nil
+//    case Cons(h, t) => Cons()
+//  }
 
   def apply[A](as: A*): MyList[A] =
     if (as.isEmpty) Nil

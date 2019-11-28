@@ -29,12 +29,18 @@ object Main extends App {
   // chapter 3
   val myL = MyList(1, 2, 3, 4, 5)
 
-  println(setHead(myL, 6))
+//  println(setHead(myL, 6))
+//
+//  println(drop(myL, 2))
+//
+//  println(dropWhile(myL)(_ < 4))
+//
+//  println(init(myL))
+//
+//  println(length(myL))
 
-  println(drop(myL, 2))
-
-  println(dropWhile(myL)(_ < 4))
-
-  println(init(myL))
+  println(sumFoldLeft(myL))
+  println(productFoldLeft(MyList(1.0, 2.0, 3.0)))
+  println(length(myL))
 
 }
