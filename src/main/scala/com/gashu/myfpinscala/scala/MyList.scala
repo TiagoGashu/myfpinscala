@@ -18,15 +18,9 @@ object MyList {
       case Cons(x, xs) => f(x, foldRight(xs, baseCase)(f))
     }
 
-  def sum(ints: MyList[Int]): Int = ints match {
-    case Nil => 0
-    case Cons(x, xs) => x + sum(xs)
-  }
+  def sum(ints: MyList[Int]): Int = foldRight(ints, 0)(_ + _)
 
-  def product(ds: MyList[Double]): Double = ds match {
-    case Nil => 1.0
-    case Cons(x, xs) => x * product(xs)
-  }
+  def product(ds: MyList[Double]): Double = foldRight(ds, 0.0)(_ * _)
 
   // 3.2
   def tail[A](l: MyList[A]): MyList[A] = l match {
