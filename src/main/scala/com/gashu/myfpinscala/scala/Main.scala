@@ -65,4 +65,7 @@ object Main extends App {
 
   // 3.21
   println(filterWithFlatMap(MyList(1, 2, 3, 4, 5))(_ % 2 == 0))
+
+  // 3.22 and 3.23
+  println(zipWith(MyList(1, 2, 3), MyList(4, 5, 6))(_ + _))
 }

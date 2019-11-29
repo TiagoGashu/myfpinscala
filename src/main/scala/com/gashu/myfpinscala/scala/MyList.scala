@@ -127,6 +127,14 @@ object MyList {
   // 3.21
   def filterWithFlatMap[A](l: MyList[A])(predicate: A => Boolean): MyList[A] =
     flatMap(l)(x => if (predicate(x)) MyList(x) else Nil)
+
+  // 3.22 and 3.23
+  def zipWith[A, B](l1: MyList[A], l2: MyList[A])(fn: (A, A) => B): MyList[B] =
+    (l1, l2) match {
+      case (Nil, Nil) => Nil
+      case (Cons(x, t1), Cons(y, t2)) => Cons(fn(x, y), zipWith(t1, t2)(fn))
+    }
+
   def apply[A](as: A*): MyList[A] =
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
