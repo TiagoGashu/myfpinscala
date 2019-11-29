@@ -103,6 +103,30 @@ object MyList {
       case Cons(h, t) => foldLeft(t, h)((list, acc) => append(acc, list))
     }
 
+  // 3.16
+  // 3.18
+  def map[A, B](l: MyList[A])(fn: A => B): MyList[B] =
+    l match {
+      case Nil => Nil
+      case Cons(x, t) => Cons(fn(x), map(t)(fn))
+    }
+
+  def filter[A](l: MyList[A])(predicate: A => Boolean): MyList[A] =
+    l match {
+      case Nil => Nil
+      case Cons(x, t) => if(predicate(x)) Cons(x, filter(t)(predicate)) else filter(t)(predicate)
+    }
+
+  // 3.20
+  def flatMap[A, B](l: MyList[A])(fn: A => MyList[B]): MyList[B] =
+    l match {
+      case Nil => Nil
+      case Cons(x, t) => append(fn(x), flatMap(t)(fn))
+    }
+
+  // 3.21
+  def filterWithFlatMap[A](l: MyList[A])(predicate: A => Boolean): MyList[A] =
+    flatMap(l)(x => if (predicate(x)) MyList(x) else Nil)
   def apply[A](as: A*): MyList[A] =
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))

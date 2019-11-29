@@ -1,11 +1,11 @@
-import com.gashu.myfpinscala.scala.MyList
+package com.gashu.myfpinscala.scala
 
 /**
  * @author tiagogashu in 27/10/2019
  **/
 object Main extends App {
-  import com.gashu.myfpinscala.scala.ScalaExercisesChapter2._
   import com.gashu.myfpinscala.scala.MyList._
+  import com.gashu.myfpinscala.scala.ScalaExercisesChapter2._
 
   // chapter 2
   println(fib(5))
@@ -51,4 +51,18 @@ object Main extends App {
 
   println(MyList(MyList(1, 2, 3), MyList(4, 5, 6), MyList(7, 8, 9)))
   println(flattenList(MyList(MyList(1, 2, 3), MyList(4, 5, 6), MyList(7, 8, 9))))
+
+  println(map(myL)(_ + 1))
+
+  // 3.17
+  println(map(MyList(1D, 2D, 3D, 4D, 5D))(_.toString))
+
+  // 3.19
+  println(filter(MyList(1, 2, 3, 4, 5))(_ % 2 == 0))
+
+  // 3.20
+  println(flatMap(MyList(1, 2, 3))(x => MyList(x, x)))
+
+  // 3.21
+  println(filterWithFlatMap(MyList(1, 2, 3, 4, 5))(_ % 2 == 0))
 }
