@@ -68,4 +68,9 @@ object Main extends App {
 
   // 3.22 and 3.23
   println(zipWith(MyList(1, 2, 3), MyList(4, 5, 6))(_ + _))
+
+  // 3.24
+  println(hasSubsequence(MyList(1, 2, 3, 4), MyList(1, 2, 4)))
+  println(hasSubsequence(MyList(1, 2, 3, 4), MyList(2, 3)))
+  println(hasSubsequence(MyList(1, 2, 3, 4), MyList(2)))
 }

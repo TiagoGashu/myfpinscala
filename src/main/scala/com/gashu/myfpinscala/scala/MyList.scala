@@ -135,6 +135,43 @@ object MyList {
       case (Cons(x, t1), Cons(y, t2)) => Cons(fn(x, y), zipWith(t1, t2)(fn))
     }
 
+  @tailrec
+  def contains[A](l: MyList[A], el: A): Boolean =
+    l match {
+      case Nil => false
+      case Cons(x, t) => x == el || contains(t, el)
+    }
+
+  def indexOf[A](l: MyList[A], el: A): Int = {
+    @tailrec
+    def loop(l: MyList[A], acc: Int): Int = l match {
+      case Nil => -1
+      case Cons(x, t) => if(x == el) acc else loop(t, acc + 1)
+    }
+    loop(l, 0)
+  }
+
+  // 3.24
+  def hasSubsequence[A](sup: MyList[A], sub: MyList[A]): Boolean = {
+
+    @tailrec
+    def loop(sup: MyList[A], sub: MyList[A], lastIdx: Int): Boolean =
+      if(lastIdx == -1) false
+      else
+      sub match {
+        case Nil => true
+        case Cons(x, t) => {
+          val currentIdx = indexOf(sup, x)
+          ((lastIdx + 1) == currentIdx) && loop(sup, t, currentIdx)
+        }
+      }
+
+    sub match {
+      case Nil => true
+      case Cons(x, t) => loop(sup, t, indexOf(sup, x))
+    }
+  }
+
   def apply[A](as: A*): MyList[A] =
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
