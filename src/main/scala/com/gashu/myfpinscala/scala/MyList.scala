@@ -159,10 +159,9 @@ object MyList {
       if(lastIdx == -1) false
       else sub match {
         case Nil => true
-        case Cons(x, t) => {
+        case Cons(x, t) =>
           val currentIdx = indexOf(sup, x)
           ((lastIdx + 1) == currentIdx) && loop(sup, t, currentIdx)
-        }
       }
 
     sub match {
