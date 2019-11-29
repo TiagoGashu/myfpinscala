@@ -157,8 +157,7 @@ object MyList {
     @tailrec
     def loop(sup: MyList[A], sub: MyList[A], lastIdx: Int): Boolean =
       if(lastIdx == -1) false
-      else
-      sub match {
+      else sub match {
         case Nil => true
         case Cons(x, t) => {
           val currentIdx = indexOf(sup, x)
