@@ -90,4 +90,13 @@ object Main extends App {
   // 3.28
   println(MyTree.map(Branch(Branch(Leaf(1), Leaf(2)), Leaf(3)))(_ + 1))
 
+  // 3.29
+  println(sizeWithFold(Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))))
+
+  println(maximumWithFold(Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))))
+
+  println(maximumPathWithFold(Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))))
+
+  println(MyTree.mapWithFold(Branch(Branch(Leaf(1), Leaf(2)), Leaf(3)))(_ + 1))
+
 }

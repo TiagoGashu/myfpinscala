@@ -37,4 +37,25 @@ object MyTree {
       case Branch(l, r) => Branch(map(l)(fn), map(r)(fn))
     }
 
+  // 3.29
+  def fold[A, B, C](t: MyTree[A])(fn: A => B)(transformer: B => C)(combine: (C, C) => C): C = {
+    def loop(t: MyTree[A]): C =
+      t match {
+        case Leaf(v) => transformer(fn(v))
+        case Branch(l, r) => combine(loop(l), loop(r))
+      }
+
+    loop(t)
+  }
+  def sizeWithFold[A](t: MyTree[A]): Int =
+    fold[A, Int, Int](t)(_ => 1)(v => v)((l, r) => 1 + l + r)
+
+  def maximumWithFold(t: MyTree[Int]): Int =
+    fold[Int, Int, Int](t)(v => v)(v => v)(_ max _)
+
+  def maximumPathWithFold[A](t: MyTree[A]): Int =
+    fold[A, Int, Int](t)(_ => 1)(v => v)((l, r) => 1 + (l max r))
+
+  def mapWithFold[A, B](t: MyTree[A])(fn: A => B): MyTree[B] =
+    fold[A, B, MyTree[B]](t)(fn)(v => Leaf(v))((l, r) => Branch(l, r))
 }
