@@ -1,33 +1,13 @@
-package com.gashu.myfpinscala.scala
+package com.gashu.myfpinscala.chapter3
 
 /**
  * @author tiagogashu in 27/10/2019
  **/
-object Main extends App {
-  import com.gashu.myfpinscala.scala.MyList._
-  import com.gashu.myfpinscala.scala.MyTree._
-  import com.gashu.myfpinscala.scala.ScalaExercisesChapter2._
+object Chapter3 extends App {
 
-  // chapter 2
-  println(fib(5))
+  import MyList._
+  import MyTree._
 
-  println(isSorted[Int](Array(1, 2, 3, 1), (x, y) => x <= y))
-
-  def sum(a: Int, b: Int) = a + b
-
-  // fixing the "a" param to 1
-  def sumOne(x: Int): Int = {
-    val curriedSum: Int => Int = curry(sum)(1)
-    curriedSum(x)
-  }
-
-  sumOne(2)
-
-  def sumConstant(cons: Int) = curry(sum)(cons)
-
-  uncurry(sumConstant)(1, 2)
-
-  // chapter 3
   val myL = MyList(1, 2, 3, 4, 5)
 
 //  println(setHead(myL, 6))

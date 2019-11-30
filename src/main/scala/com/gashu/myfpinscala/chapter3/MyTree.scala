@@ -1,4 +1,4 @@
-package com.gashu.myfpinscala.scala
+package com.gashu.myfpinscala.chapter3
 
 /**
  * @author tiagogashu in 29/11/2019

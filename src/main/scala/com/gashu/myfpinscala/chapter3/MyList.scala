@@ -1,4 +1,4 @@
-package com.gashu.myfpinscala.scala
+package com.gashu.myfpinscala.chapter3
 
 import scala.annotation.tailrec
 
