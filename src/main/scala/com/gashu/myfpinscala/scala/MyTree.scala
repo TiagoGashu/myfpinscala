@@ -39,9 +39,11 @@ object MyTree {
 
   // 3.29
   def fold[A, B, C](t: MyTree[A])(fn: A => B)(transformer: B => C)(combine: (C, C) => C): C = {
+    val composedFn = transformer compose fn
+
     def loop(t: MyTree[A]): C =
       t match {
-        case Leaf(v) => transformer(fn(v))
+        case Leaf(v) => composedFn(v)
         case Branch(l, r) => combine(loop(l), loop(r))
       }
 
