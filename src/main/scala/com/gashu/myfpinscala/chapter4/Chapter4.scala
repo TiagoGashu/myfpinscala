@@ -6,7 +6,7 @@ package com.gashu.myfpinscala.chapter4
 object Chapter4 extends App {
 
   def mean(xs: Seq[Double]): MyOption[Double] =
-    if(xs.isEmpty) Empty
+    if(xs.isEmpty) None
     else Option(xs.sum / xs.length)
 
   def variance(xs: Seq[Double]): MyOption[Double] = {
