@@ -16,31 +16,31 @@ class MyOptionImpl[A](value: A) extends MyOption[A] {
   def map[B](f: A => B): MyOption[B] =
     this match {
       case None => None
-      case Option(v) => Option(f(v))
+      case Some(v) => Some(f(v))
     }
 
   def flatMap[B](f: A => MyOption[B]): MyOption[B] =
     this match {
       case None => None
-      case Option(v) => f(v)
+      case Some(v) => f(v)
     }
 
   def getOrElse[B >: A](default: => B): B =
     this match {
       case None => default
-      case Option(v) => v
+      case Some(v) => v
     }
 
   def orElse[B >: A](ob: => MyOption[B]): MyOption[B] =
     this match {
       case None => ob
-      case Option(v) => Option(v)
+      case Some(v) => Some(v)
     }
 
   def filter(f: A => Boolean): MyOption[A] =
     this match {
       case None => None
-      case Option(v) => if(f(v)) Option(v) else None
+      case Some(v) => if(f(v)) Some(v) else None
     }
 
 }
@@ -53,11 +53,11 @@ object MyOptionImpl {
   def map2[A, B, C](a: MyOption[A], b: MyOption[B])(f: (A, B) => C): MyOption[C] =
     (a, b) match {
       case (a, b) if a == None || b == None => None
-      case (Option(a), Option(b)) => Option(f(a, b))
+      case (Some(a), Some(b)) => Some(f(a, b))
     }
 
 
 }
 
-case class Option[A](value: A) extends MyOptionImpl[A](value: A)
+case class Some[A](value: A) extends MyOptionImpl[A](value: A)
 case object None extends MyOptionImpl
