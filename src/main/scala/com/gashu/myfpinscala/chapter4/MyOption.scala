@@ -4,14 +4,6 @@ package com.gashu.myfpinscala.chapter4
  * @author tiagogashu in 30/11/2019
  **/
 sealed trait MyOption[+A] {
-  def map[B](f: A => B): MyOption[B]
-  def flatMap[B](f: A => MyOption[B]): MyOption[B]
-  def getOrElse[B >: A](default: => B): B
-  def orElse[B >: A](ob: => MyOption[B]): MyOption[B]
-  def filter(f: A => Boolean): MyOption[A]
-}
-
-class MyOptionImpl[A](value: A) extends MyOption[A] {
 
   def map[B](f: A => B): MyOption[B] =
     this match {
@@ -45,6 +37,9 @@ class MyOptionImpl[A](value: A) extends MyOption[A] {
 
 }
 
+case class Some[+A](value: A) extends MyOption[A]
+case object None extends MyOption[Nothing]
+
 object MyOptionImpl {
 
   def lift[A, B](f: A => B): MyOption[A] => MyOption[B] = _ map f
@@ -56,8 +51,22 @@ object MyOptionImpl {
       case (Some(a), Some(b)) => Some(f(a, b))
     }
 
+  // 4.4
+  def sequence[A](a: List[MyOption[A]]): MyOption[List[A]] = {
 
+    def listIfBothDefined(leftList: List[A], optL: MyOption[List[A]]): MyOption[List[A]] =
+      optL match {
+        case None => None
+        case Some(l) => Some(leftList ::: l)
+      }
+
+    a match {
+      case Nil => None
+      case None :: _ => None
+      case Some(x) :: Nil => Some(List(x))
+      case Some(x: A) :: (tail: List[A]) =>
+        (List(List(x)) foldRight sequence(tail))(listIfBothDefined)
+    }
+
+  }
 }
-
-case class Some[A](value: A) extends MyOptionImpl[A](value: A)
-case object None extends MyOptionImpl
