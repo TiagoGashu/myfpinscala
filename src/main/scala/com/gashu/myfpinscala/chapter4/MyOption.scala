@@ -48,11 +48,13 @@ object MyOption {
 
   // 4.3
   def map2[A, B, C](a: MyOption[A], b: MyOption[B])(f: (A, B) => C): MyOption[C] =
-    a flatMap {
-      valueA => b map {
-        valueB => f(valueA, valueB)
-      }
+    // <- = flatMap
+    for {
+      valueA <- a
+      valueB <- b
     }
+    // yield = map
+    yield f(valueA, valueB)
 
   // 4.4
   def sequence[A](a: List[MyOption[A]]): MyOption[List[A]] = {
