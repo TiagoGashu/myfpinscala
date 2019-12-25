@@ -13,9 +13,9 @@ object Chapter4 extends App {
     mean(xs) flatMap (m => mean(xs.map(x => math.pow(x - m, 2))))
   }
 
-  println(MyOptionImpl.sequence(List(Some(1), Some(2), Some(3))))
-  println(MyOptionImpl.sequence(List(Some(1), Some(2), None)))
-  println(MyOptionImpl.sequence(List(Some(1), None, Some(2))))
-  println(MyOptionImpl.sequence(List(None, Some(1), Some(2))))
+  println(MyOption.sequence(List(Some(1), Some(2), Some(3))))
+  println(MyOption.sequence(List(Some(1), Some(2), None)))
+  println(MyOption.sequence(List(Some(1), None, Some(2))))
+  println(MyOption.sequence(List(None, Some(1), Some(2))))
 
 }

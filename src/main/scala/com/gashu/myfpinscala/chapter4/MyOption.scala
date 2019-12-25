@@ -1,5 +1,7 @@
 package com.gashu.myfpinscala.chapter4
 
+import scala.util.Try
+
 /**
  * @author tiagogashu in 30/11/2019
  **/
@@ -40,7 +42,7 @@ sealed trait MyOption[+A] {
 case class Some[+A](value: A) extends MyOption[A]
 case object None extends MyOption[Nothing]
 
-object MyOptionImpl {
+object MyOption {
 
   def lift[A, B](f: A => B): MyOption[A] => MyOption[B] = _ map f
 
@@ -54,7 +56,7 @@ object MyOptionImpl {
   // 4.4
   def sequence[A](a: List[MyOption[A]]): MyOption[List[A]] = {
 
-    def listIfBothDefined(leftList: List[A], optL: MyOption[List[A]]): MyOption[List[A]] =
+    def SomeIfBothDefined(leftList: List[A], optL: MyOption[List[A]]): MyOption[List[A]] =
       optL match {
         case None => None
         case Some(l) => Some(leftList ::: l)
@@ -65,7 +67,7 @@ object MyOptionImpl {
       case None :: _ => None
       case Some(x) :: Nil => Some(List(x))
       case Some(x: A) :: (tail: List[A]) =>
-        (List(List(x)) foldRight sequence(tail))(listIfBothDefined)
+        (List(List(x)) foldRight sequence(tail))(SomeIfBothDefined)
     }
 
   }
