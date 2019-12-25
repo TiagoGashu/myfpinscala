@@ -48,9 +48,10 @@ object MyOption {
 
   // 4.3
   def map2[A, B, C](a: MyOption[A], b: MyOption[B])(f: (A, B) => C): MyOption[C] =
-    (a, b) match {
-      case (a, b) if a == None || b == None => None
-      case (Some(a), Some(b)) => Some(f(a, b))
+    a flatMap {
+      valueA => b map {
+        valueB => f(valueA, valueB)
+      }
     }
 
   // 4.4
@@ -71,4 +72,9 @@ object MyOption {
     }
 
   }
+
+  // 4.5
+  def traverse[A, B](a: List[A])(f: A => MyOption[B]): MyOption[List[B]] =
+    sequence(a map f)
+
 }
