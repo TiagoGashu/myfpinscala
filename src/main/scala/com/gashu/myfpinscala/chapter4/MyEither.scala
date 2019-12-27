@@ -45,15 +45,15 @@ object MyEither {
   // ex. 4.7
   def sequence[E, A](es: List[MyEither[E, A]]): MyEither[E, List[A]] = {
 
-    def concatIfNoErrorFound(leftList: List[A], optL: MyEither[E, List[A]]): MyEither[E, List[A]] =
-      optL match {
+    def concatIfNoErrorFound(leftList: List[A], eitherL: MyEither[E, List[A]]): MyEither[E, List[A]] =
+      eitherL match {
         case Left(e) => Left(e)
         case Right(l) => Right(leftList ::: l)
       }
 
     es match {
       case Nil => Right(Nil)
-      case e: E :: _ => Left(e)
+      case (e: E) :: Nil => Left(e)
       case Right(x) :: Nil => Right(List(x))
       case Right(x: A) :: (tail: List[MyEither[E, A]]) =>
         (List(List(x)) foldRight sequence(tail)) (concatIfNoErrorFound)
