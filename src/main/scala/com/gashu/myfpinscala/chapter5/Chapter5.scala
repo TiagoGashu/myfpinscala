@@ -9,4 +9,10 @@ object Chapter5 extends App {
 
   println(streamOfInts.toList)
 
+  println(streamOfInts.takeWhileUsingFoldRight(_ < 3).toList)
+
+  println(streamOfInts.headOption)
+
+  println(Empty.headOption)
+
 }

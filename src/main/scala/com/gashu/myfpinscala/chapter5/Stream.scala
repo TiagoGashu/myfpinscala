@@ -1,7 +1,5 @@
 package com.gashu.myfpinscala.chapter5
 
-import scala.annotation.tailrec
-
 /**
  * @author tiagogashu in 27/12/2019
  **/
@@ -31,11 +29,29 @@ sealed trait Stream[+A] {
   def takeWhile(p: A => Boolean): Stream[A] =
     this match {
       case Empty => Empty
-      case Cons(h, t) => {
+      case Cons(h, t) =>
         lazy val head = h
-        if( p(head()) ) Cons(head, () => t().takeWhile(p)) else Empty
-      }
+        lazy val tail = t
+        if( p(head()) ) Cons(head, () => tail().takeWhile(p)) else Empty
     }
+
+  def foldRight[B](z: => B)(f: (A, => B) => B): B =
+    this match {
+      case Cons(h,t) => f(h(), t().foldRight(z)(f))
+      case _ => z
+    }
+
+  // 5.4
+  def forAll(p: A => Boolean): Boolean =
+    foldRight(true)((a, b) => if(!p(a)) false else b)
+
+  // 5.5
+  def takeWhileUsingFoldRight(p: A => Boolean): Stream[A] =
+    foldRight[Stream[A]](Empty)((a, b) => if(p(a)) Stream.cons(a, b) else Empty)
+
+  // 5.6
+  def headOption: Option[A] =
+    foldRight[Option[A]](None)((a, _) => if(a != Empty) Some(a) else None)
 
 }
 case object Empty extends Stream[Nothing]
