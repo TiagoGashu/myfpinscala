@@ -102,4 +102,22 @@ object Stream {
     aux(0, 1)
   }
 
+  // 5.11
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = {
+    f(z) match {
+      case None => Empty
+      case Some((value, newState)) => Stream.cons(value, unfold(newState)(f))
+    }
+  }
+
+  // 5.12
+  def unfoldConstant[A](a: A): Stream[A] =
+    unfold(a)(s => Some((a, s)))
+
+  def unfoldFrom(n: Int): Stream[Int] =
+    unfold(n)(s => Some(s + 1, s + 1))
+
+  def unfoldFib(): Stream[Int] =
+    unfold((0, 1))(s => Some(s._2, (s._2, s._1 + s._2)))
+
 }
