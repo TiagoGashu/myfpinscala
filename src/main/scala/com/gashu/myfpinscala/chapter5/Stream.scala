@@ -120,4 +120,6 @@ object Stream {
   def unfoldFib(): Stream[Int] =
     unfold((0, 1))(s => Some(s._2, (s._2, s._1 + s._2)))
 
+  // TODO 5.13, 5.14, 5.15, 5.16
+
 }
