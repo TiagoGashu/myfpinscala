@@ -86,4 +86,20 @@ object Stream {
       case Cons(h, t) => Cons(h, () => concat(t(), s2))
     }
 
+  // 5.8
+  def constant[A](a: A): Stream[A] =
+    Stream.cons(a, constant(a))
+
+  // 5.9
+  def from(n: Int): Stream[Int] =
+    Stream.cons(n, from(n + 1))
+
+  // 5.10
+  def fib(): Stream[Int] = {
+    def aux(a: Int, b: Int): Stream[Int] =
+      Stream.cons(a, aux(b, a + b))
+
+    aux(0, 1)
+  }
+
 }
