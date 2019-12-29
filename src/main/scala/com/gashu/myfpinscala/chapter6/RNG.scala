@@ -78,9 +78,6 @@ object RNG {
     loop(count, rng, List())
   }
 
-  def unit[A](a: A): Rand[A] =
-    rng => (a, rng)
-
   def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
     rng => {
       val (a, rng2) = s(rng)
@@ -129,7 +126,7 @@ object RNG {
     }
 
   def intsUsingSequence(count: Int)(rng: RNG): (List[Int], RNG) =
-    sequence(List.fill(count)(_.nextInt))(rng)
+    sequence(List.fill[Rand[Int]](count)(r => r.nextInt))(rng)
 
   def nonNegativeLessThan(n: Int): Rand[Int] = { rng =>
     val (i, rng2) = nonNegativeInt(rng)
