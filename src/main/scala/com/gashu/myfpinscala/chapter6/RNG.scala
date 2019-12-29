@@ -23,7 +23,7 @@ object RNG {
   type Rand[+A] = RNG => (A, RNG)
 
   // 6.1
-  def nonNegative(rng: RNG): (Int, RNG) = {
+  def nonNegativeInt(rng: RNG): (Int, RNG) = {
     val (n, nextRNG) = rng.nextInt
     (if(n < 0) -(n + 1) else n, nextRNG)
   }
@@ -126,4 +126,39 @@ object RNG {
 
   def intsUsingSequence(count: Int)(rng: RNG): (List[Int], RNG) =
     sequence(List.fill(count)(_.nextInt))(rng)
+
+  def nonNegativeLessThan(n: Int): Rand[Int] = { rng =>
+    val (i, rng2) = nonNegativeInt(rng)
+    val mod = i % n
+    if (i + (n-1) - mod >= 0)
+      (mod, rng2)
+    else nonNegativeLessThan(n)(rng)
+  }
+
+  // 6.8
+  def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
+    rng => {
+      val (x1, rng2) = f(rng)
+      val (x2, rng3) = g(x1)(rng2)
+      (x2, rng3)
+    }
+
+  // 6.9
+  def mapUsingFlatMap[A, B](s: Rand[A])(f: A => B): Rand[B] =
+    rng => {
+      flatMap(s)(x => {
+        rng2 => (f(x), rng2)
+      })(rng)
+    }
+
+  def map2USingFlatMap[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    rng => {
+      flatMap(ra)(x => {
+        rng2 => {
+          flatMap(rb)(y => {
+            rng3 => (f(x, y), rng3)
+          })(rng2)
+        }
+      })(rng)
+    }
 }
