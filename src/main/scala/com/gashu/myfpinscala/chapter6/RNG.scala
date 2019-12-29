@@ -119,7 +119,7 @@ object RNG {
           tail.foldLeft(z)((combined, nextRand) => {
             val (listA, previousRng) = combined
             val (nextA, nextRng) = nextRand(previousRng)
-            (nextA :: listA, nextRng)
+            (listA ::: List(nextA), nextRng)
           })
       }
     }
