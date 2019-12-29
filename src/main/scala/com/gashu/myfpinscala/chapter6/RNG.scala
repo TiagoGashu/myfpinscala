@@ -106,4 +106,24 @@ object RNG {
   val randDoubleInt: Rand[(Double, Int)] =
     both(double, int)
 
+  // 6.7
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
+    rng => {
+      fs match {
+        case rand :: Nil =>
+          val (x, rng2) = rand(rng)
+          (List(x), rng2)
+        case rand :: tail =>
+          val (a, rng2) = rand(rng)
+          val z = (List(a), rng2)
+          tail.foldLeft(z)((combined, nextRand) => {
+            val (listA, previousRng) = combined
+            val (nextA, nextRng) = nextRand(previousRng)
+            (nextA :: listA, nextRng)
+          })
+      }
+    }
+
+  def intsUsingSequence[A](count: Int)(rng: RNG): (List[Int], RNG) =
+    sequence(List.fill(count)(r => r.nextInt))(rng)
 }
