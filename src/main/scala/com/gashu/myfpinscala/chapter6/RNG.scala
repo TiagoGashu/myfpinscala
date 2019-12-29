@@ -28,6 +28,8 @@ object RNG {
     (if(n < 0) -(n + 1) else n, nextRNG)
   }
 
+  def int(rng: RNG): (Int, RNG) = rng.nextInt
+
   // 6.2
   def double(rng: RNG): (Double, RNG) = {
     val (n, nextRNG) = rng.nextInt
@@ -87,5 +89,21 @@ object RNG {
       if(n < 0) (math.abs(n + 1) / Int.MaxValue).toDouble
       else (n / Int.MaxValue).toDouble
     })
+
+  // 6.6
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    rng => {
+      val (a, rng2) = ra(rng)
+      val (b, rng3) = rb(rng2)
+      (f(a, b), rng3)
+    }
+
+  def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A,B)] =
+    map2(ra, rb)((_, _))
+
+  val randIntDouble: Rand[(Int, Double)] =
+    both(int, double)
+  val randDoubleInt: Rand[(Double, Int)] =
+    both(double, int)
 
 }
