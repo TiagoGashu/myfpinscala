@@ -124,6 +124,6 @@ object RNG {
       }
     }
 
-  def intsUsingSequence[A](count: Int)(rng: RNG): (List[Int], RNG) =
-    sequence(List.fill(count)(r => r.nextInt))(rng)
+  def intsUsingSequence(count: Int)(rng: RNG): (List[Int], RNG) =
+    sequence(List.fill(count)(_.nextInt))(rng)
 }
