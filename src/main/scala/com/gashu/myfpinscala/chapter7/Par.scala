@@ -36,4 +36,8 @@ object Par {
     UnitFuture(f(af.get, bf.get))
   }
 
+  // 7.4
+  def asyncF[A, B](f: A => B): A => Par[B] =
+    (x: A) => fork[B](unit(f(x)))
+
 }
