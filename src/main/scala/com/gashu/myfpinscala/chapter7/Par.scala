@@ -57,4 +57,14 @@ object Par {
     sequence(fbs)
   }
 
+  // 7.6
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+
+    def filterFoldingRight(a: A, list: List[A]):List[A] = if(f(a)) a :: list else list
+
+    as.foldRight[Par[List[A]]](unit(List()))((a, listOfPar) => {
+      map2(unit(a), listOfPar)(filterFoldingRight)
+    })
+
+  }
 }
