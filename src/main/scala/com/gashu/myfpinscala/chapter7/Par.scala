@@ -40,4 +40,21 @@ object Par {
   def asyncF[A, B](f: A => B): A => Par[B] =
     (x: A) => fork[B](unit(f(x)))
 
+  def map[A,B](pa: Par[A])(f: A => B): Par[B] =
+    map2(pa, unit(()))((a,_) => f(a))
+
+  def sortPar(parList: Par[List[Int]]): Par[List[Int]] =
+    map(parList)(_.sorted)
+
+  // 7.5
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] =
+    ps.foldLeft[Par[List[A]]](unit(List()))((listOfPar, par) => {
+      map2(listOfPar, par)((listOfA, a) => a :: listOfA)
+    })
+
+  def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] = fork {
+    val fbs: List[Par[B]] = ps.map(asyncF(f))
+    sequence(fbs)
+  }
+
 }
