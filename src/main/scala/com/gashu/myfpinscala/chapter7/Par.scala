@@ -48,8 +48,8 @@ object Par {
 
   // 7.5
   def sequence[A](ps: List[Par[A]]): Par[List[A]] =
-    ps.foldLeft[Par[List[A]]](unit(List()))((listOfPar, par) => {
-      map2(listOfPar, par)((listOfA, a) => a :: listOfA)
+    ps.foldRight[Par[List[A]]](unit(List()))((par, listOfPar) => {
+      map2(par, listOfPar)((a, listOfA) => a :: listOfA)
     })
 
   def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] = fork {
