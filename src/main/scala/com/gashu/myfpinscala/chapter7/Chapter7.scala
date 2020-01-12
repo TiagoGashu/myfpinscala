@@ -22,6 +22,9 @@ object Chapter7 extends App {
   val p = parMap(List.range(1, 100000))(math.sqrt(_))
   val x = run(Executors.newFixedThreadPool(2))(p)
 
-  println(x.head)
+  val y = run(Executors.newFixedThreadPool(2))(parFilter(List.range(1, 10000))(_ % 2 == 0))
+
+//  println(x.head)
+  println(y.head)
 
 }

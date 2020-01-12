@@ -78,7 +78,7 @@ object Par {
     as match {
       case Nil => unit(List())
       case h :: Nil => map(h)(List(_))
-      case list => 
+      case list =>
         val (l, r) = list.splitAt(list.length/2)
         map2(sequenceBalanced(l), sequenceBalanced(r))(_ ++ _)
     }
@@ -92,13 +92,13 @@ object Par {
 
   // 7.6
   def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
-
-    def filterFoldingRight(a: A, list: List[A]):List[A] = if(f(a)) a :: list else list
-
-    as.foldRight[Par[List[A]]](unit(List()))((a, listOfPar) => {
-      map2(unit(a), listOfPar)(filterFoldingRight)
-    })
-
+    as match {
+      case Nil => unit(List())
+      case h :: Nil => if(f(h)) unit(List(h)) else unit(List())
+      case list =>
+        val (l, r) = list.splitAt(list.length/2)
+        map2(parFilter(l)(f), parFilter(r)(f))(_ ++ _)
+    }
   }
 
   // TODO: generalize the sum fn
