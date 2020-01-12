@@ -5,18 +5,9 @@ import java.util.concurrent.{Callable, CountDownLatch, ExecutorService}
 
 import com.gashu.myfpinscala.parallelism.Actor
 
-import scala.concurrent.duration.TimeUnit
-
 /**
  * @author tiagogashu in 29/12/2019
  **/
-private case class UnitFuture[A](get: A) extends Future[A] {
-  def isDone = true
-  def get(timeout: Long, units: TimeUnit) = get
-  def isCancelled = false
-  def cancel(evenIfRunning: Boolean): Boolean = false
-}
-
 sealed trait Future[A] {
   private[chapter7] def apply(k: A => Unit): Unit
 }
@@ -48,6 +39,7 @@ object Par {
     p(es) {
       a => ref.set(a); latch.countDown()
     }
+    latch.await
     ref.get
   }
 
@@ -82,15 +74,21 @@ object Par {
     map(parList)(_.sorted)
 
   // 7.5
-  def sequence[A](ps: List[Par[A]]): Par[List[A]] =
-    ps.foldRight[Par[List[A]]](unit(List()))((par, listOfPar) => {
-      map2(par, listOfPar)((a, listOfA) => a :: listOfA)
-    })
-
-  def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] = fork {
-    val fbs: List[Par[B]] = ps.map(asyncF(f))
-    sequence(fbs)
+  def sequenceBalanced[A](as: List[Par[A]]): Par[List[A]] = fork {
+    as match {
+      case Nil => unit(List())
+      case h :: Nil => map(h)(List(_))
+      case list => 
+        val (l, r) = list.splitAt(list.length/2)
+        map2(sequenceBalanced(l), sequenceBalanced(r))(_ ++ _)
+    }
   }
+
+  def sequence[A](as: List[Par[A]]): Par[List[A]] =
+    map(sequenceBalanced(as))(_.toList)
+
+  def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] =
+    sequence(ps.map(asyncF(f)))
 
   // 7.6
   def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
