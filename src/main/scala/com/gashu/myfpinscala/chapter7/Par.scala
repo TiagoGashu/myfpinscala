@@ -101,6 +101,21 @@ object Par {
     }
   }
 
+  // 7.11
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
+    es => choices(run(es)(n))(es)
+
+  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+    choiceN(map(cond)(if(_) 1 else 0))(List(f, t))
+
+  // 7.12
+  def choiceMap[K,V](key: Par[K])(choices: Map[K,Par[V]]): Par[V] =
+    es => choices(run(es)(key))(es)
+
+  // 7.13
+  def chooser[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] =
+    es => choices(run(es)(pa))(es)
+
   // TODO: generalize the sum fn
 
   /**
