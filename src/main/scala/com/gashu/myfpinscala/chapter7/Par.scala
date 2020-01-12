@@ -116,6 +116,12 @@ object Par {
   def chooser[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] =
     es => choices(run(es)(pa))(es)
 
+  def choiceWithChooser[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+    chooser[Int, A](map(cond)(if(_) 1 else 0))(List(f, t)(_))
+
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
+    chooser[Int, A](n)(choices(_))
+
   // TODO: generalize the sum fn
 
   /**
