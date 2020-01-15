@@ -122,6 +122,16 @@ object Par {
   def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
     chooser[Int, A](n)(choices(_))
 
+  // 7.14
+  def join[A](a: Par[Par[A]]): Par[A] =
+    es => run(es)(a)(es)
+
+  def flatMap[A,B](a: Par[A])(f: A => Par[B]): Par[B] =
+    join(map2[A, _, Par[B]](a, unit(()))((a, _) => f(a)))
+
+  def joinUsingFlatMap[A](a: Par[Par[A]]): Par[A] =
+    flatMap[Par[A], A](a)(a => a)
+
   // TODO: generalize the sum fn
 
   /**
