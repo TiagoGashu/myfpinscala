@@ -7,7 +7,18 @@ import scala.annotation.tailrec
 /**
  * @author tiagogashu in 17/01/2020
  **/
-case class Gen[A](sample: State[RNG, A])
+case class Gen[A](sample: State[RNG, A]) {
+
+  def flatMap[B](f: A => Gen[B]): Gen[B] =
+    Gen(State(r => {
+      val (v, r2) = sample.run(r)
+      f(v).sample.run(r2)
+    }))
+
+  def listOfN(sizeGen: Gen[Int]): Gen[List[A]] =
+    sizeGen.flatMap(size => Gen.listOfN(size, this))
+
+}
 
 object Gen {
 
