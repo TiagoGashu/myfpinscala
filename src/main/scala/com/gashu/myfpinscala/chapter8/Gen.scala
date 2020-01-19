@@ -126,5 +126,4 @@ object Gen {
       x => Gen.listOfN(x, g)
     }
 
-  
 }
