@@ -34,7 +34,7 @@ case class Gen[A](sample: State[RNG, A]) {
 
 }
 
-case class SGen[+A](forSize: Int => Gen[A]) {
+case class SGen[A](forSize: Int => Gen[A]) {
 
   def map[B](f: A => B): SGen[B] =
     SGen {
@@ -54,7 +54,7 @@ object Gen {
     Gen {
       State {
         (rng: RNG) => {
-          val (n, rng2) = rng.nextInt
+          val (n, rng2) = RNG.nonNegativeInt(rng)
           val nBetween = (n % (stopExclusive - start)) + start
           (nBetween, rng2)
         }

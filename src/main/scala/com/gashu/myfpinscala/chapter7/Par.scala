@@ -102,11 +102,11 @@ object Par {
   }
 
   // 7.11
-  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
-    es => choices(run(es)(n))(es)
+//  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
+//    es => choices(run(es)(n))(es)
 
   def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
-    choiceN(map(cond)(if(_) 1 else 0))(List(f, t))
+    choiceN[A](map(cond)(if(_) 1 else 0))(List(f, t))
 
   // 7.12
   def choiceMap[K,V](key: Par[K])(choices: Map[K,Par[V]]): Par[V] =
@@ -127,7 +127,7 @@ object Par {
     es => run(es)(a)(es)
 
   def flatMap[A,B](a: Par[A])(f: A => Par[B]): Par[B] =
-    join(map2[A, _, Par[B]](a, unit(()))((a, _) => f(a)))
+    join(map2[A, Unit, Par[B]](a, unit(()))((a, _) => f(a)))
 
   def joinUsingFlatMap[A](a: Par[Par[A]]): Par[A] =
     flatMap[Par[A], A](a)(a => a)
