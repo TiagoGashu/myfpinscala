@@ -6,10 +6,11 @@ import com.gashu.myfpinscala.chapter8.Prop.{FailedCase, SuccessCount, TestCases}
 /**
  * @author tiagogashu in 15/01/2020
  **/
-sealed trait Prop[A] {
+sealed trait Prop {
 
   def check: Result
-  def &&(p: Prop[A]): Prop[A]
+  def &&(p: Prop): Prop
+  def ||(p: Prop): Prop
 
 }
 
