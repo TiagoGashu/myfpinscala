@@ -6,14 +6,6 @@ import com.gashu.myfpinscala.chapter8.Prop.{FailedCase, SuccessCount, TestCases}
 /**
  * @author tiagogashu in 15/01/2020
  **/
-sealed trait Prop {
-
-  def check: Result
-  def &&(p: Prop): Prop
-  def ||(p: Prop): Prop
-
-}
-
 sealed trait Result {
   def isFalsified: Boolean
 }
@@ -25,12 +17,39 @@ case class Falsified(failure: FailedCase,
   def isFalsified = true
 }
 
+case class Prop(run: (TestCases,RNG) => Result) {
+
+  def &&(p: Prop): Prop =
+    Prop {
+      (n, rng) => run(n, rng) match {
+        case Passed => p.run(n, rng)
+        case f@Falsified(_, _) => f
+      }
+    }
+
+  def ||(p: Prop): Prop =
+    Prop {
+      (n, rng) => run(n, rng) match {
+        case passed@Passed => passed
+        case Falsified(failureMsg, _) => p.tag(failureMsg).run(n, rng)
+      }
+    }
+
+  def tag(msg: String): Prop =
+    Prop {
+      (n, rng) => run(n, rng) match {
+        case Falsified(failureMsg, successCount) => Falsified(msg + ":" + failureMsg, successCount)
+        case x => x
+      }
+    }
+
+}
+
 object Prop {
 
   type FailedCase = String
   type SuccessCount = Int
   type TestCases = Int
-  case class Prop(run: (TestCases,RNG) => Result)
 
   def forAll[A](as: Gen[A])(f: A => Boolean): Prop = Prop {
     (n,rng) => randomStream(as)(rng).zip(LazyList.from(0)).take(n).map {
