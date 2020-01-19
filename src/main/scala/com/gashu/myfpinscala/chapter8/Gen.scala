@@ -120,4 +120,11 @@ object Gen {
         }
       }
     }
+
+  def listOf[A](g: Gen[A]): SGen[List[A]] =
+    SGen {
+      x => Gen.listOfN(x, g)
+    }
+
+  
 }
