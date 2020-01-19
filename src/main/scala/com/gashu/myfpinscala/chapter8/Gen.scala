@@ -62,4 +62,13 @@ object Gen {
       else g2.sample.run(r2)
     }))
 
+  def weighted[A](g1: (Gen[A],Double), g2: (Gen[A],Double)): Gen[A] =
+    Gen(State(r => {
+      val (d, r2) = RNG.double(r)
+      val totalWeight = g1._2 + g2._2
+      val g1Weight = g1._2 / totalWeight
+      if(d < g1Weight) g1._1.sample.run(r2)
+      else g2._1.sample.run(r2)
+    }))
+
 }
