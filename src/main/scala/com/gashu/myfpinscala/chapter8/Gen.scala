@@ -1,8 +1,6 @@
 package com.gashu.myfpinscala.chapter8
 
-import com.gashu.myfpinscala.chapter6.{RNG, SimpleRNG, State}
-
-import scala.annotation.tailrec
+import com.gashu.myfpinscala.chapter6.{RNG, State}
 
 /**
  * @author tiagogashu in 17/01/2020
@@ -56,5 +54,12 @@ object Gen {
 
     Gen(State(r => loop(r, n, g)))
   }
+
+  def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] =
+    Gen(State(r => {
+      val (d, r2) = RNG.double(r)
+      if(d < 0.5) g1.sample.run(r2)
+      else g2.sample.run(r2)
+    }))
 
 }
