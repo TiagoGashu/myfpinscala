@@ -7,6 +7,16 @@ import com.gashu.myfpinscala.chapter6.{RNG, State}
  **/
 case class Gen[A](sample: State[RNG, A]) {
 
+  def map[B](f: A => B): Gen[B] =
+    Gen {
+      State {
+        r => {
+          val (v, r2) = sample.run(r)
+          (f(v), r2)
+        }
+      }
+    }
+
   def flatMap[B](f: A => Gen[B]): Gen[B] =
     Gen {
       State {
@@ -19,6 +29,22 @@ case class Gen[A](sample: State[RNG, A]) {
 
   def listOfN(sizeGen: Gen[Int]): Gen[List[A]] =
     sizeGen.flatMap(size => Gen.listOfN(size, this))
+
+  def unsized[A] = SGen(_ => this)
+
+}
+
+case class SGen[+A](forSize: Int => Gen[A]) {
+
+  def map[B](f: A => B): SGen[B] =
+    SGen {
+      x => forSize(x) map(f)
+    }
+
+  def flatMap[B](f: A => Gen[B]): SGen[B] =
+    SGen {
+      x => forSize(x) flatMap(f)
+    }
 
 }
 
