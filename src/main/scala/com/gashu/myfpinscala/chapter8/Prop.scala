@@ -1,45 +1,50 @@
 package com.gashu.myfpinscala.chapter8
 
-import com.gashu.myfpinscala.chapter8.Prop.{FailedCase, SuccessCount}
+import com.gashu.myfpinscala.chapter6.RNG
+import com.gashu.myfpinscala.chapter8.Prop.{FailedCase, SuccessCount, TestCases}
 
 /**
  * @author tiagogashu in 15/01/2020
  **/
 sealed trait Prop[A] {
 
-  def check: Either[(FailedCase, SuccessCount), SuccessCount]
+  def check: Result
   def &&(p: Prop[A]): Prop[A]
 
 }
 
-class PropImpl[A] extends Prop[A] {
-
-  override def check: Either[(FailedCase, SuccessCount), SuccessCount] =
-    this match {
-
-      case Predicate(a, p) => if(p.apply(a)) Right(1) else Left(("Predicate failed"), 0)
-
-      case And(p1, p2) => p1.check match {
-        case Right(sCount) => p2.check match {
-          case Right(sCount2) => Right(sCount + sCount2)
-          case Left((f2, sCount2)) => Left(f2, sCount + sCount2)
-        }
-        case _ => _
-      }
-
-    }
-
-  override def &&(p: Prop[A]): Prop[A] =
-    And(this, p)
-
+sealed trait Result {
+  def isFalsified: Boolean
 }
-
-case class Predicate[A](a: A, predicate: A => Boolean) extends PropImpl[A]
-case class And[A](thisP: Prop[A], thatP: Prop[A]) extends PropImpl[A]
+case object Passed extends Result {
+  def isFalsified = false
+}
+case class Falsified(failure: FailedCase,
+                     successes: SuccessCount) extends Result {
+  def isFalsified = true
+}
 
 object Prop {
 
   type FailedCase = String
   type SuccessCount = Int
+  type TestCases = Int
+  case class Prop(run: (TestCases,RNG) => Result)
+
+  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = Prop {
+    (n,rng) => randomStream(as)(rng).zip(LazyList.from(0)).take(n).map {
+      case (a, i) => try {
+        if (f(a)) Passed else Falsified(a.toString, i)
+      } catch { case e: Exception => Falsified(buildMsg(a, e), i) }
+    }.find(_.isFalsified).getOrElse(Passed)
+  }
+
+  def randomStream[A](g: Gen[A])(rng: RNG): LazyList[A] =
+    LazyList.unfold(rng)(rng => Some(g.sample.run(rng)))
+
+  def buildMsg[A](s: A, e: Exception): String =
+    s"test case: $s\n" +
+      s"generated an exception: ${e.getMessage}\n" +
+      s"stack trace:\n ${e.getStackTrace.mkString("\n")}"
 
 }
