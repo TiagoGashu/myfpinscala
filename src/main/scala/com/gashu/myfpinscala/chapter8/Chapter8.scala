@@ -18,4 +18,18 @@ object Chapter8 extends App {
 
   Prop.run(maxProp)
 
+  val sortMinProp = Prop.forAll(Gen.listOf(smallInt)) {
+    ns =>
+      if(ns.isEmpty) true
+      else ns.sorted.head == ns.min
+  }
+  val sortMaxProp = Prop.forAll(Gen.listOf(smallInt)) {
+    ns =>
+      if(ns.isEmpty) true
+      else ns.sorted.last == ns.max
+  }
+
+  Prop.run(sortMinProp)
+  Prop.run(sortMaxProp)
+
 }

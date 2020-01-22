@@ -126,4 +126,9 @@ object Gen {
       x => Gen.listOfN(x, g)
     }
 
+  def listOf1[A](g: Gen[A]): SGen[List[A]] =
+    SGen {
+      x => Gen.listOfN(x max 1, g)
+    }
+
 }
